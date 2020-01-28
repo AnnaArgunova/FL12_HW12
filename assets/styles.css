@@ -1,0 +1,38 @@
+
+#root{
+    background-color: rgba(141, 140, 140, 0.486);
+    margin: 0 auto;
+    max-width: 1240px;
+}
+
+.button{
+display: block;
+margin-left: auto;
+}
+
+h2{
+    text-align: center;
+}
+
+.input-wrapper{
+   padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+input{
+    border: none;
+    border-bottom: 1px black solid;
+    width: 40vw;
+    height: 3vh;
+    margin: 5px;
+}
+
+.button.terms{
+    margin-left: 5px;;
+}
+
+.button-wrapper{
+    display: flex;
+    justify-content: space-around;
+}
