@@ -7,7 +7,7 @@
 
 .button{
 display: block;
-margin-left: auto;
+
 }
 
 h2{
@@ -35,4 +35,8 @@ input{
 .button-wrapper{
     display: flex;
     justify-content: space-around;
+}
+
+.hidden{
+    display:none;
 }

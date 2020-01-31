@@ -1,117 +1,111 @@
-const rootNode = document.getElementById('root'),
- buttonAdd = document.createElement('button'),
- remove = document.createElement('button'),
- addPage = document.createElement('div');
-addPage.className = 'add-page';
-rootNode.appendChild(addPage);
+const rootNode = document.getElementById('root');
 
+function locationHashChange() {
+    if (location.hash === '#main') {
+        mainPage();
+        removePage(addPageWrapper);
+    } else if (location.hash === '#addPage') {
+        addPage();
+        removePage(mainWrapper);
+    }
+}
+
+
+window.addEventListener('hashchange', locationHashChange, false);
+class Tag {
+    constructor(tag, className) {
+        this.tag = tag;
+        this.className = className;
+        this.node = document.createElement(this.tag);
+    }
+
+    getTage() {
+
+        this.node.className = this.className;
+        return this.node;
+    }
+
+    addText(text) {
+        this.node.innerText = text;
+
+    }
+
+    addAttributes(attribute, value) {
+        this.node.setAttribute(attribute, value);
+
+    }
+
+}
+
+let addPageWrapper = new Tag('div', 'add-page');
+rootNode.appendChild(addPageWrapper.getTage());
+const mainWrapper = new Tag('div', 'main-wrapper');
+rootNode.appendChild(mainWrapper.getTage());
+
+
+// remove page
+
+function removePage(item) {
+    while (item.getTage().firstChild) {
+        item.getTage().removeChild(item.getTage().firstChild)
+    }
+   
+}
 
 //main page
+
 function mainPage() {
-    buttonAdd.innerText = 'Add new';
-    buttonAdd.className = 'button';
-    rootNode.appendChild(buttonAdd);
-    remove.style.backgroundColor = 'green';
-    remove.style.width = '50px';
-    remove.style.height = '50px';
-    rootNode.appendChild(remove);
+    location.hash = 'main';
+    let buttonAdd = new Tag('button', 'buttonAdd');
+    buttonAdd.addText('Add new');
+    mainWrapper.getTage().appendChild(buttonAdd.getTage());
+
+    buttonAdd.getTage().addEventListener('click', function () {
+        location.hash = 'addPage';
+    })
+
 }
 mainPage();
 
-
 //add page
-const save = document.createElement('button'),
-    inputName = document.createElement('input'),
-    buttonTerms = document.createElement('button'),
-    input = document.createElement('div')
-    button = document.createElement('div'),
-    cancel = document.createElement('button'),
-    inputTerms = document.createElement('div'),
-    inputTerm = document.createElement('input'),
-    inputDefinition = document.createElement('input'),
-    header = document.createElement('h2');
+function addPage() {
+    const inputName = new Tag('input', 'input');
+    inputName.addAttributes('placeholder', 'Name');
+    addPageWrapper.getTage().appendChild(inputName.getTage());
+    const buttonAddTerms = new Tag('button', 'button');
+    buttonAddTerms.addText('Add terms');
+    addPageWrapper.getTage().appendChild(buttonAddTerms.getTage());
+    const buttonWraper = new Tag('div', 'button-wrapper');
+    addPageWrapper.getTage().appendChild(buttonWraper.getTage());
+    const buttonSave = new Tag('button', 'button');
+    buttonSave.addText('Save');
+    buttonWraper.getTage().appendChild(buttonSave.getTage());
+    const buttonCancel = new Tag('button', 'button');
+    buttonCancel.addText('Cancel');
+    buttonWraper.getTage().appendChild(buttonCancel.getTage());
+    let inputTerm = new Tag('input', 'input');
+    inputTerm.addAttributes('placeholder', 'Enter term');
+    let inputDefinition = new Tag('input', 'input');
+            inputDefinition.addAttributes('placeholder', 'Enter definition');
 
-function addPages() {
-    console.log('addPage');
-    header.innerText = 'Add new set';
-    addPage.appendChild(header);
-    input.className = 'input-wrapper';
-    addPage.appendChild(input);
-    inputName.className = 'input name',
-    inputName.setAttribute('name', 'name');
-    inputName.setAttribute('placeholder', 'Name');
-    input.appendChild(inputName);
-    buttonTerms.className = 'button terms';
-    buttonTerms.innerText = 'Add terms';
-    input.appendChild(buttonTerms);
-
-    buttonTerms.addEventListener('click', function () {
-        if (inputName.value) {
-            addPage.appendChild(inputTerms);
-            inputTerms.className = 'input-wrapper';
-
-            inputTerm.setAttribute('placeholder', 'Enter term');
-            inputTerms.appendChild(inputTerm);
-
-            inputDefinition.setAttribute('placeholder', 'Enter definition');
-            inputTerms.appendChild(inputDefinition);
+    buttonAddTerms.getTage().addEventListener('click', function () {
+        if (inputName.getTage().value) {
+            let inputWrapper = new Tag('div', 'input-wraper');
+            addPageWrapper.getTage().appendChild(inputWrapper.getTage());
+            inputWrapper.getTage().appendChild(inputTerm.getTage());
+             inputWrapper.getTage().appendChild(inputDefinition.getTage());
         }
-    });
 
-    button.className = 'button-wrapper';
-    addPage.appendChild(button);
-    save.className = 'button-save';
-    save.innerText = 'Save changes';
-    button.appendChild(save);
-    cancel.className = 'button-cancel';
-    cancel.innerText = 'Cancel';
-    button.appendChild(cancel);
+    })
+
+    buttonSave.getTage().addEventListener('click', function () {
+        
+        let sets = {
+            inputTerm: inputTerm.getTage().value,
+            inputDefinition: inputDefinition.getTage().value
+        };
+        localStorage.setItem(inputName.getTage().value, JSON.stringify(sets));
+        location.hash = 'main';
+    })
 
 }
-
-//remove
-function removes() {
-    console.log('remove');
-}
-
-function removeChildren(item) {
-    while (item.firstChild) {
-        addPage.removeChild(item.firstChild);
-    }
-}
-
-function locationHashChanged() {
-    if (location.hash === "#addPage") {
-        addPages();
-        removeChildren(mainPage);
-        removeChildren(remove);
-
-    } else if (location.hash === "#remove") {
-        remove();
-
-    } else if (location.hash === '#main') {
-        mainPage();
-        removeChildren(addPage);
-    }
-}
-
-
-window.addEventListener('hashchange', locationHashChanged, false);
-
-buttonAdd.addEventListener('click', function () {
-    location.hash = 'addPage';
-});
-
-remove.addEventListener('click', function () {
-    location.hash = 'remove';
-   });
-
-save.addEventListener('click', function () {
-    location.hash = 'main';
-
-    let sets = {
-        inputTerm: inputTerm.value,
-        inputDefinition: inputDefinition.value
-    };
-    localStorage.setItem(inputName.value, JSON.stringify(sets));
-})
