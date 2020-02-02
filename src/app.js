@@ -1,16 +1,17 @@
 const rootNode = document.getElementById('root');
 
 function locationHashChange() {
-    if (location.hash === '#main') {
-        mainPage();
-        removePage(addPageWrapper);
-    } else if (location.hash === '#addPage') {
+    if (location.hash === '#addPage') {
         addPage();
         removePage(mainWrapper);
     } else if (location.hash === '#modifyPage'){
-       
+        
         removePage(mainWrapper);
-    }
+    }  else  {
+        mainPage();
+        removePage(addPageWrapper);
+        removePage(modifyWrapper);
+    } 
 }
 
 
@@ -60,7 +61,7 @@ function removePage(item) {
 //main page
 
 function mainPage() {
-    location.hash = 'main';
+    
     const buttonAdd = new Tag('button', 'buttonAdd');
     buttonAdd.addText('Add new');
     mainWrapper.getTage().appendChild(buttonAdd.getTage());
@@ -137,34 +138,55 @@ function mainPage() {
               localStorage.removeItem(key);
                  removePage(mainWrapper);
                  mainPage();
-              
+         
             }
         }
     } else if(target.innerText =='Modify set'){
       //modify page
+      
+        location.hash = 'modifyPage';
+     
+       let changeTerm = new Tag('input', 'changeName');
+    let changeDefinition = new Tag('input', 'change-definition');
+    let name = new Tag('p', 'name');
 
-       location.hash = 'modifyPage';
-       let changeName = new Tag('input', 'changeName');
-    
-       let button = new Tag ('button', 'button');
-       modifyWrapper.getTage().appendChild(button.getTage());
-       console.log('modify');
+       let buttonSave = new Tag ('button', 'button-save');
+       buttonSave.addText('Save');
+       modifyWrapper.getTage().appendChild(buttonSave.getTage());
+       
        for (let key in localStorage) {
-           if (!localStorage.hasOwnProperty(key)) {
-               continue;
-           }
-           if (target.className === key) {
-           changeName.addAttributes('placeholder', key);
-           modifyWrapper.getTage().appendChild(changeName.getTage());
-           console.log(localStorage[key]);
-           }
-       }
-    }
+        if (!localStorage.hasOwnProperty(key)) {
+            continue;
+        }
+        if (target.className === key) {
+        console.log(target);
+            let sets = JSON.parse(localStorage.getItem(key));
+           name.addText('Name ' + key);
+            modifyWrapper.getTage().appendChild(name.getTage());
 
+        changeTerm.addAttributes('placeholder', sets.inputTerm);
+        modifyWrapper.getTage().appendChild(changeTerm.getTage());
+       
+        changeDefinition.addAttributes('placeholder', sets.inputDefinition);
+        modifyWrapper.getTage().appendChild(changeDefinition.getTage());
+    
+        buttonSave.getTage().addEventListener('click', function(){
+             
+            sets = {
+                inputTerm: changeTerm.getTage().value,
+                inputDefinition: changeDefinition.getTage().value
+            }
 
+           localStorage.setItem(key, JSON.stringify(sets));
+          location.hash = 'main';
+           })
+        
+        }
+        }
+    
+}
     })
-
-   
+  
 }
 
 
@@ -191,25 +213,35 @@ function addPage() {
     let inputDefinition = new Tag('input', 'input');
     inputDefinition.addAttributes('placeholder', 'Enter definition');
 
+    
+    buttonCancel.getTage().addEventListener('click', function(){
+        location.hash = 'main';
+    })
     buttonAddTerms.getTage().addEventListener('click', function () {
         if (inputName.getTage().value) {
             let inputWrapper = new Tag('div', 'input-wraper');
             addPageWrapper.getTage().appendChild(inputWrapper.getTage());
             inputWrapper.getTage().appendChild(inputTerm.getTage());
             inputWrapper.getTage().appendChild(inputDefinition.getTage());
+            
+            
+            buttonSave.getTage().addEventListener('click', function () {
+
+                let sets = {
+                    inputTerm: inputTerm.getTage().value,
+                    inputDefinition: inputDefinition.getTage().value
+                };
+                localStorage.setItem(inputName.getTage().value, JSON.stringify(sets));
+                location.hash = 'main';
+            })
+        
         }
 
+       
+
     })
 
-    buttonSave.getTage().addEventListener('click', function () {
-
-        let sets = {
-            inputTerm: inputTerm.getTage().value,
-            inputDefinition: inputDefinition.getTage().value
-        };
-        localStorage.setItem(inputName.getTage().value, JSON.stringify(sets));
-        location.hash = 'main';
-    })
+   
 
 }
 
